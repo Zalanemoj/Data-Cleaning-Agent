@@ -1,0 +1,58 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2">
+  <diagram name="Workflow 1" id="zLeBBCDumq_FjLF39qss">
+    <mxGraphModel dx="1613" dy="828" grid="1" gridSize="12" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="_-EN4Gge0k446pLFTnK4-2" parent="1" style="whiteSpace=wrap;html=1;fontSize=27;" value="&lt;font face=&quot;Courier New&quot;&gt;Workflow 1&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="1104" x="-120" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-3" parent="1" style="verticalLabelPosition=bottom;aspect=fixed;html=1;shape=mxgraph.salesforce.stream;fillColorStyles=fillColor2,fillColor3,fillColor4;fillColor2=#032d60;fillColor3=#0d9dda;fillColor4=#ffffff;fillColor=none;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="60" width="60" x="-96" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Strimlit" vertex="1">
+          <mxGeometry height="30" width="60" x="-96" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-7" parent="1" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#0080F0;shadow=0;dashed=0;shape=mxgraph.ios7.icons.mail;" value="" vertex="1">
+          <mxGeometry height="36" width="60" x="-96" y="348" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Mail" vertex="1">
+          <mxGeometry height="30" width="60" x="-96" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-11" parent="1" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.sharpArrow;dy1=0.67;dx1=18;dx2=18;notch=0;" value="" vertex="1">
+          <mxGeometry height="60" width="100" x="12" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-12" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/ai_machine_learning/AI_Studio.svg;" value="" vertex="1">
+          <mxGeometry height="68" width="64" x="180" y="286" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="AI Agent" vertex="1">
+          <mxGeometry height="30" width="60" x="180" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-14" parent="1" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.sharpArrow;dy1=0.67;dx1=18;dx2=18;notch=0;" value="" vertex="1">
+          <mxGeometry height="60" width="100" x="300" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-15" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Courier New;fontSize=13;" value="What are the changes that need to be done in the data set and the suggestions of the input to be added is provided by the AI agent" vertex="1">
+          <mxGeometry height="141" width="276" x="432" y="249.5" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-16" parent="1" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.sharpArrow;dy1=0.67;dx1=18;dx2=18;notch=0;" value="" vertex="1">
+          <mxGeometry height="60" width="100" x="732" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-22" parent="1" style="verticalLabelPosition=bottom;aspect=fixed;html=1;shape=mxgraph.salesforce.stream;fillColorStyles=fillColor2,fillColor3,fillColor4;fillColor2=#032d60;fillColor3=#0d9dda;fillColor4=#ffffff;fillColor=none;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="60" width="60" x="876" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Strimlit" vertex="1">
+          <mxGeometry height="30" width="60" x="876" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-24" parent="1" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#0080F0;shadow=0;dashed=0;shape=mxgraph.ios7.icons.mail;" value="" vertex="1">
+          <mxGeometry height="36" width="60" x="876" y="348" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Mail" vertex="1">
+          <mxGeometry height="30" width="60" x="876" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="_-EN4Gge0k446pLFTnK4-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=12 12;strokeColor=#60A917;" value="" vertex="1">
+          <mxGeometry height="408" width="1152" x="-144" y="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
