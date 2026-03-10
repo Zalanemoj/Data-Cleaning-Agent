@@ -1,0 +1,79 @@
+import os
+import io
+import traceback
+import numpy as np
+import pandas as pd
+from flask import Flask, request, jsonify
+from pyngrok import ngrok
+from google.colab import userdata
+
+app = Flask(__name__)
+
+AUTH_TOKEN = userdata.get('ngrok')
+ngrok.set_auth_token(AUTH_TOKEN)
+
+try:
+    public_url = ngrok.connect(5000).public_url
+    print(f"🚀 COLAB BACKEND READY!")
+    print(f"🔗 Copy this URL to your Streamlit app: {public_url}/clean")
+except Exception as e:
+    print(f"❌ Error starting ngrok: {e}")
+
+@app.route('/clean', methods=['POST'])
+def clean_data():
+    try:
+        data = request.json
+        csv_string = data.get('csv_data')
+        python_code = data.get('code', '').strip()
+
+        if not csv_string:
+            return jsonify({"status": "error", "message": "No csv_data provided"}), 400
+        if not python_code:
+            return jsonify({"status": "error", "message": "No code provided"}), 400
+
+        df = pd.read_csv(io.StringIO(csv_string))
+
+        exec_globals = {
+            "__builtins__": __builtins__,
+            "pd": pd,
+            "np": np,
+        }
+        exec_locals = {"df": df}
+
+        exec(python_code, exec_globals, exec_locals)
+
+        cleaned_df = exec_locals.get("df", df)
+
+        if not isinstance(cleaned_df, pd.DataFrame):
+            return jsonify({
+                "status": "error",
+                "message": "Executed code did not produce a valid DataFrame."
+            }), 400
+
+        return jsonify({
+            "status": "success",
+            "rows": len(cleaned_df),
+            "cols": len(cleaned_df.columns),
+            "csv": cleaned_df.to_csv(index=False)
+        })
+
+    except SyntaxError as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Syntax error in generated code — Line {e.lineno}: {e.msg}",
+            "code_preview": python_code[:300]
+        }), 400
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e),
+            "detail": traceback.format_exc()
+        }), 400
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "ok", "message": "Colab backend is running"}), 200
+
+if __name__ == '__main__':
+    app.run(port=5000)
