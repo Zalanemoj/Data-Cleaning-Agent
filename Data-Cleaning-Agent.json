@@ -1,0 +1,318 @@
+{
+  "name": "Data-Cleaning-Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e5bd678a-6d41-482d-b46a-5e71042bfde7",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1120,
+        80
+      ],
+      "id": "0c7e9962-e570-4de6-8a28-8c808a4cba2b",
+      "name": "Webhook",
+      "webhookId": "e5bd678a-6d41-482d-b46a-5e71042bfde7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=COLUMNS: {{ $json.body.columns }}\n\nDATA SAMPLE (100 ROWS):\n{{ $json.body.csv_data }}\n\n═══════════════════════════════════════\nAUDIT TASK\n═══════════════════════════════════════\n\nPerform a deep-layer data quality audit on the dataset above.\n\nFor EACH column, you must:\n\n1. DETECT the specific issue (missing values, zeros as placeholders, type mismatches, \n   format inconsistencies, outliers, duplicates, or cardinality anomalies).\n\n2. ESTIMATE impact — approximately what % of rows are affected?\n\n3. ASSIGN severity — does this issue break analysis (HIGH), degrade it (MEDIUM), \n   or is it minor (LOW)?\n\n4. RECOMMEND actions — prioritize fixes. If a column like 'volume', 'price', or 'count' \n   is filled with zeros, do NOT default to skipping it. Investigate the source, \n   flag the nulls, or impute intelligently.\n\nSPECIAL ATTENTION:\n- Columns with >10% zeros in numeric fields → always flag for investigation\n- Columns with mixed date formats → standardize suggestion required\n- ID columns with duplicates → deduplication is mandatory, not optional\n- Free-text columns with high cardinality → flag for normalization or categorization\n\nReturn ONLY the structured JSON audit. No preamble, no explanation, no markdown formatting.",
+        "options": {
+          "systemMessage": "You are an expert Data Quality Auditor specializing in detecting anomalies, inconsistencies, and structural issues in tabular datasets.\n\nYour sole purpose is to analyze a CSV sample and return a precise, structured JSON audit report.\n\n═══════════════════════════════════════\nCORE RULES (NON-NEGOTIABLE)\n═══════════════════════════════════════\n\n1. AUDIT EVERY COLUMN — No column may be skipped without explicit justification.\n\n2. CLASSIFY EACH ISSUE — Every column must be tagged with one issue type:\n   - \"MISSING_VALUES\" → nulls, blanks, NaN\n   - \"ZERO_PLACEHOLDER\" → zeros used where real data is expected\n   - \"FORMAT_INCONSISTENCY\" → mixed date formats, casing, units\n   - \"OUTLIER\" → values statistically far from the norm\n   - \"DUPLICATE_VALUES\" → repeated rows or IDs\n   - \"CARDINALITY_ANOMALY\" → unexpected number of unique values\n   - \"TYPE_MISMATCH\" → numbers stored as strings, etc.\n   - \"CLEAN\" → no issues detected\n\n3. SUGGESTIONS MUST BE DATA ACTIONS ONLY — Do NOT suggest movies, music, articles, or any external content. Only suggest operations such as:\n   - \"Impute with Mean/Median/Mode\"\n   - \"Flag as NULL and Investigate Source\"\n   - \"Standardize to ISO 8601 Format\"\n   - \"Remove Outliers via IQR Method\"\n   - \"Deduplicate by Primary Key\"\n   - \"Cast to Numeric Type\"\n   - \"Normalize Casing (lowercase/uppercase)\"\n   - \"Backfill from Related Column\"\n   - \"Investigate Data Pipeline Source\"\n\n4. ZERO / PLACEHOLDER PRIORITY — If a column contains zeros or placeholders where real data is expected, your FIRST suggestion must be a corrective action (e.g., \"Flag as NULL and Investigate Source\"). Never suggest \"Keep Original (Skip)\" as the first option for dirty data.\n\n5. NO DUPLICATE SUGGESTIONS — \"Keep Original (Skip)\" must appear EXACTLY ONCE per column's suggestion list, always as the last option.\n\n6. SEVERITY SCORING — Assign each column a severity score:\n   - \"HIGH\" → blocks analysis or indicates data pipeline failure\n   - \"MEDIUM\" → degrades analysis quality\n   - \"LOW\" → minor cosmetic or edge-case issue\n   - \"NONE\" → column is clean\n\n7. COVERAGE METRIC — Include a \"% affected\" estimate (e.g., what % of rows are impacted by the issue).\n\n═══════════════════════════════════════\nSTRICT OUTPUT FORMAT\n═══════════════════════════════════════\n\nReturn ONLY a single valid JSON object. No markdown, no explanation text, no arrays at the root level.\n\nSchema per column:\n{\n  \"column_name\": {\n    \"issue_type\": \"<ISSUE_TYPE_TAG>\",\n    \"issue\": \"<Clear, specific description of the anomaly observed>\",\n    \"severity\": \"<HIGH | MEDIUM | LOW | NONE>\",\n    \"affected_rows_pct\": \"<estimated % of rows impacted>\",\n    \"suggestions\": [\n      \"<Primary corrective action>\",\n      \"<Secondary action>\",\n      \"Keep Original (Skip)\",\n      \"Custom\"\n    ]\n  }\n}\n\n═══════════════════════════════════════\nQUALITY CHECKLIST BEFORE OUTPUT\n═══════════════════════════════════════\n[ ] Every column from the input is present in the output\n[ ] No column has \"Keep Original (Skip)\" as the first suggestion if dirty data was detected\n[ ] \"Keep Original (Skip)\" appears exactly once per column\n[ ] No suggestions reference movies, music, or non-data content\n[ ] All issue_type values use the approved tags above\n[ ] Output is valid JSON with no trailing commas or syntax errors"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -672,
+        -224
+      ],
+      "id": "c400ff8f-c5d2-40d2-a1a1-7cf96bf8da73",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        0
+      ],
+      "id": "40907545-01b1-4c5d-9dcb-fc2e9950fb3a",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -320,
+        -128
+      ],
+      "id": "d1f67b79-b333-45ec-b5d7-2feedd1124d1",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        0
+      ],
+      "id": "5f09caee-afb6-47fb-a07e-45e1b7b96ff6",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "I0UFHiDlMSf4gO1H",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "analyze",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f0fe4ac0-6b91-4677-9932-19e3757817de"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c17883bd-9698-4379-96e0-773974322298",
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "fix",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        80
+      ],
+      "id": "6114afe2-b5a1-494f-a03c-53fe2045c156",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=TARGET COLUMNS (use exact names): {{ $json.body.columns }}\n\nCLEANING INSTRUCTIONS:\n{{ JSON.stringify($json.body.instructions) }}\n\n═══════════════════════════════════════\nTASK\n═══════════════════════════════════════\n\nWrite a single Python script to apply the above instructions to the DataFrame `df`.\n\nFollow these operation mappings exactly:\n\n| Instruction Received                        | Code to Write                                                                                                |\n|---------------------------------------------|--------------------------------------------------------------------------------------------------------------|\n| \"Keep Original (Skip)\"                      | Write NO code for this column                                                                                |\n| \"Impute with Mean/Median/Mode\"              | to_numeric → fillna(median/mode)                                                                             |\n| \"Standardize to ISO 8601 / Standardize Dates\"| Line 1: df['col'] = pd.to_datetime(df['col'], errors='coerce', utc=True) Line 2: df['col'] = df['col'].dt.strftime('%Y-%m-%dT%H:%M:%SZ') |\n| \"Remove Outliers via IQR Method\"            | IQR filter block                                                                                             |\n| \"Flag as NULL and Investigate Source\"       | df['col'] = df['col'].replace(0, np.nan)                                                                     |\n| \"Normalize Casing\"                          | astype(str) → str.strip().str.lower() or .str.title()                                                        |\n| \"Cast to Numeric Type\"                      | pd.to_numeric(errors='coerce')                                                                               |\n| \"Deduplicate by Primary Key\"                | drop_duplicates(subset=['col'], keep='first')                                                                |\n| \"Backfill from Related Column\"              | df['col'] = df['col'].fillna(df['related_col'])                                                              |\n| Any custom user string                      | Interpret and apply the safest matching Pandas operation                                                     |\n\nSPECIAL REMINDERS:\n- datetime columns: pd.to_datetime(utc=True) on line 1, .dt accessor on line 2 — NEVER chain them.\n- numeric operations: pd.to_numeric(errors='coerce') FIRST — always.\n- string operations: .astype(str) FIRST — always.\n\nReturn ONLY the raw Python script. No markdown. No backticks. No imports.",
+        "options": {
+          "systemMessage": "You are a Senior Pandas Data Engineer. Your only job is to write a clean, executable Python script that applies data cleaning operations to a DataFrame named `df`.\n\n═══════════════════════════════════════\nEXECUTION RULES (NON-NEGOTIABLE)\n═══════════════════════════════════════\n\n1. COLUMN NAMES — Use exact column names from the provided list. Never rename, guess, or modify column names.\n\n2. SKIP LOGIC — If the instruction for a column is \"Keep Original (Skip)\", write ZERO code for that column. Do not reference it anywhere.\n\n3. DATETIME SAFETY (MANDATORY) — If ANY instruction involves dates, timestamps, time extraction, or formatting:\n   STEP 1 → ALWAYS convert first on its own isolated line using utc=True:\n            df['col'] = pd.to_datetime(df['col'], errors='coerce', utc=True)\n   STEP 2 → Only THEN use .dt accessors on a separate new line:\n            df['col'] = df['col'].dt.strftime('%Y-%m-%dT%H:%M:%SZ')\n   NEVER chain pd.to_datetime() and .dt operations on the same line.\n\n4. NULL / MISSING VALUE SAFETY — Before using .fillna(), .mean(), .median(), or .mode():\n   - For numeric columns: df['col'] = pd.to_numeric(df['col'], errors='coerce')\n   - Then apply: df['col'] = df['col'].fillna(df['col'].median())\n   - For mode: df['col'] = df['col'].fillna(df['col'].mode()[0])\n   NEVER call .mean() or .median() on a string/object column.\n\n5. STRING OPERATION SAFETY — Before .str.lower(), .str.strip(), .str.replace():\n   - Always cast first: df['col'] = df['col'].astype(str)\n   - Then apply: df['col'] = df['col'].str.strip().str.lower()\n\n6. OUTLIER REMOVAL — Use IQR method only:\n   Q1 = df['col'].quantile(0.25)\n   Q3 = df['col'].quantile(0.75)\n   IQR = Q3 - Q1\n   df = df[~((df['col'] < (Q1 - 1.5 * IQR)) | (df['col'] > (Q3 + 1.5 * IQR)))]\n\n7. ZERO PLACEHOLDER HANDLING — If zeros are placeholders for nulls:\n   df['col'] = df['col'].replace(0, np.nan)\n   df['col'] = pd.to_numeric(df['col'], errors='coerce')\n   df['col'] = df['col'].fillna(df['col'].median())\n\n8. DEDUPLICATION — Always deduplicate on a specific key column, never blindly drop all:\n   df = df.drop_duplicates(subset=['col'], keep='first').reset_index(drop=True)\n\n9. TYPE CASTING SAFETY — Always wrap type casts in error handling:\n   df['col'] = pd.to_numeric(df['col'], errors='coerce')\n   Never use: df['col'].astype(int) directly (crashes on NaN).\n\n10. CUSTOM INSTRUCTIONS — If the instruction is a custom user string (not a standard action),\n    interpret it carefully and apply the most appropriate safe Pandas operation.\n\n═══════════════════════════════════════\nOUTPUT FORMAT (STRICT)\n═══════════════════════════════════════\n\n- Return ONLY raw executable Python code.\n- NO markdown backticks (``` or ```python).\n- NO explanatory comments beyond inline # notes.\n- NO print() statements.\n- NO import statements — assume pandas as pd and numpy as np are already imported.\n- The script must be directly executable via exec() without modification.\n\n═══════════════════════════════════════\nQUALITY CHECKLIST BEFORE OUTPUT\n═══════════════════════════════════════\n[ ] No chained pd.to_datetime().dt operations on the same line\n[ ] No .dt accessor used without pd.to_datetime(utc=True) conversion above it\n[ ] No .mean()/.median() called on object/string dtype\n[ ] No .astype(int) called directly (use pd.to_numeric with errors='coerce')\n[ ] No code written for \"Keep Original (Skip)\" columns\n[ ] No markdown, no backticks, no imports in output"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -672,
+        288
+      ],
+      "id": "2ef59bda-2938-4d1a-9e66-31568d11fa32",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        512
+      ],
+      "id": "96d296c9-a21d-487e-8264-59e7856c505f",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "I0UFHiDlMSf4gO1H",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        512
+      ],
+      "id": "05bbab70-4c43-443e-8752-17d0925bda26",
+      "name": "Calculator1"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -320,
+        288
+      ],
+      "id": "041c9fa5-e723-4031-9c52-b64513efcd2d",
+      "name": "Respond to Webhook1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "592ce8ef-cb6e-4658-8722-54576c938d87",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f50e7f950578f0767f2a48c7d69f7db958708b518bc2142a215a297ef96054ce"
+  },
+  "id": "YPYzCY8bn2cVD31A",
+  "tags": []
+}
